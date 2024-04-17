@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Box, IconButton, Modal, Button, InputAdornment, Typography, Grid, Avatar, Badge, Divider, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle} from '@mui/material';
-import {Edit, Email, ToggleOnRounded, ToggleOffOutlined, EmailOutlined, AccountCircleRounded, CameraAltRounded, GroupsRounded, ContactsRounded, Settings, LogoutRounded, Close} from '@mui/icons-material';
+import {Edit, Email, ToggleOnRounded, ToggleOffOutlined, EmailOutlined, CameraAltRounded} from '@mui/icons-material';
 
 const modalStyle = {
     display:'flex',
@@ -50,7 +50,7 @@ function AccountModal(){
                     </Badge>
                     <input type='file'
                         name='imgSource'
-                        onchange={handleImgChange}
+                        onChange={handleImgChange}
                         ref={refInputTypeFile} hidden></input>
                     </Grid>
                     <Grid item xs={8} sx={{...fstyle,alignItems:'start'}}>
@@ -81,13 +81,7 @@ function AccountModal(){
                 <Typography variant='body2' sx={{fontSize:'11px',fontWeight:'400',color:'red'}}>Once you have agreed, all your data will be lost, conversation from your contacts 
                     and from stranger will not be deleted, but your account will be flagged as deleted. 
                     You won't be able to login again</Typography>
-                <Button
-                    size='small'
-                    variant='outlined'
-                    color='error'
-                    sx={{
-                        px:'20px',my:'10px'
-                    }}>Delete my Account</Button>
+                <DeleteAcc/>
             </Box>
         </>
 )}
@@ -299,8 +293,16 @@ function HideEmail(){
 
 function DeactivateAcc(){
     const [modalBox, setModalBox] = React.useState(false);
+    const [deactivate, setdeactivate] = React.useState(false);
     const handleModalOpen = () => setModalBox(true);
-    const handleModalClose = () => setModalBox(false);
+    const handleModalCloseA = () => {
+        setdeactivate(true);
+        setModalBox(false);
+    }
+    const handleModalCloseD = () => {
+        setdeactivate(false);
+        setModalBox(false);
+    }
     return(
         <>
             <Box>
@@ -309,26 +311,71 @@ function DeactivateAcc(){
                     variant='outlined'
                     color='success'
                     sx={{px:'20px',my:'10px'}}
-                    onClick={handleModalOpen}>Deactivate my Account</Button>
+                    onClick={handleModalOpen}
+                    disabled={deactivate}>Deactivate my Account</Button>
+                <Typography hidden={!deactivate} variant='body2' sx={{fontSize:'11px', fontWeight:'500', color:'red'}}>
+                    You will only be able to Activate your account after 3 days
+                </Typography>
                 <Dialog
                     open={modalBox}
                     aria-labelledby="modal-modal-title"
                     aria-describedby="modal-modal-description"
                     sx={modalStyle}>
-                    <DialogTitle id="alert-dialog-title">
-                        {"Use Google's location service?"}
+                    <DialogTitle id="alert-dialog-title" sx={{color:'#154017'}}>
+                        {"DEACTIVATE MY ACCOUNT?"}
                     </DialogTitle>
                     <DialogContent>
-                        <DialogContentText id="alert-dialog-description">
-                            Let Google help apps determine location. This means sending anonymous
-                            location data to Google, even when no apps are running.
+                        <DialogContentText id="alert-dialog-description" sx={{fontSize:'12px', fontWeight:'500'}}>
+                        Once you Deactivate your account, you will still be able to login but you won't be able to send message, change settings, modify groups, etc..
+                        <br/><br/>
+                        You can only Activate your account again after 5 days from the time you deactivate your account
                         </DialogContentText>
                     </DialogContent>
                     <DialogActions>
-                        <Button onClick={handleModalClose}>Disagree</Button>
-                        <Button onClick={handleModalClose} autoFocus>
-                            Agree
-                        </Button>
+                        <Button onClick={handleModalCloseD} color='success'>Cancel</Button>
+                        <Button onClick={handleModalCloseA} color='success' autoFocus>Deactivate my Account</Button>
+                    </DialogActions>
+                </Dialog>
+            </Box>
+        </>
+    )
+}
+
+function DeleteAcc(){
+    const [modalBox, setModalBox] = React.useState(false);
+    const handleModalOpen = () => setModalBox(true);
+    const handleModalCloseA = () => setModalBox(false);
+    const handleModalCloseD = () => setModalBox(false);
+
+    return(
+        <>
+            <Box>
+                <Button
+                    size='small'
+                    variant='outlined'
+                    color='error'
+                    sx={{px:'20px',my:'10px'}}
+                    onClick={handleModalOpen}>Delete my Account</Button>
+                <Dialog
+                    open={modalBox}
+                    aria-labelledby="modal-modal-title"
+                    aria-describedby="modal-modal-description"
+                    sx={modalStyle}>
+                    <DialogTitle id="alert-dialog-title" sx={{color:'#ba3838'}}>
+                        {"DEACTIVATE MY ACCOUNT?"}
+                    </DialogTitle>
+                    <DialogContent>
+                        <DialogContentText id="alert-dialog-description" sx={{fontSize:'12px', fontWeight:'500', color:'#823333'}}>
+                        Are you sure you want to Delete your Account Permanently? 
+                        <br/><br/>
+                        -This account will no longer be able to recover once you agree<br/>
+                        -Your Account will be Flagged as "Deleted" to all friends you have chatted with but the conversation will be remain<br/>
+                        (After 3 days, all your chat to other people will show as "Deleted Chat")
+                        </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleModalCloseD}>Cancel</Button>
+                        <Button onClick={handleModalCloseA} color='error' autoFocus>Delete my Account PERMANENTLY</Button>
                     </DialogActions>
                 </Dialog>
             </Box>
